@@ -8,13 +8,48 @@
 #define sizeArray(x) (sizeof(x)/ sizeof((x)[0]))
 
 // global vars
-int HUMSUM;
-int COMPSUM;
+int HUMSUM = 0;
+int COMPSUM = 0;
+int HUMPOINT = 0;
+int COMPPOINT = 0;
 
-int cardArray[] = {3,K,Q,4,5,2,10,6,9,J,7,8,
+int cardArray[] = { 3,K,Q,4,5,2,10,6,9,J,7,8,
 K,2,Q,3,J,8,10,5,9,6,4,7,
 6,9,7,3,8,4,Q,2,5,J,10,K,
 8,3,Q,5,J,4,6,7,K,10,9,2 };
+
+void push(int *pntA, int *pntB) {
+
+	if (s.top == (MAXSIZE - 1)) {
+		printf("Stack is full!\n");
+		return;
+	}
+
+	else {
+		s.top = s.top + 1;
+		s.stk[s.top] = *pntA;
+
+		s.top = s.top + 1;
+		s.stk[s.top] = *pntB;
+	}
+}
+
+int pop() {
+	
+	int number;
+
+	if (s.top == -1) {
+		printf("Stack is empty\n");
+		return(s.top);
+	}
+
+	else {
+		number = s.stk[s.top];
+		s.top = s.top - 1;
+	}
+
+	return(number);
+}
 
 void swap(int *a, int *b) { // swap integers
 
@@ -48,13 +83,26 @@ int passOutCompCards(int *foo) {
 	int *cardPtr = foo;
 
 	for (i = 0; i < 1; i++) {
+		if (*cardPtr == NULL) { // fix when pointer is done iterating through array
+			int *shuffle = reShuffle();
+			*cardPtr = shuffle;
+		}
+
 		printf("Computer Cards are: %d", *cardPtr);
 		cardPtr++;
 	}
 
+	int *add = cardPtr - 1;
+	COMPSUM = *add + *cardPtr;
+
+	push(cardPtr, add);
+
 	printf(" and ? \n");
+	//printf(" --> Sum is %d\n", COMPSUM);
+
 	return (cardPtr); // return pointer to address of cardPtr
 }
+
 
 // display first two cards from players hand. Also display sum
 int passOutHumCards(int *ptrCard) {
@@ -63,6 +111,17 @@ int passOutHumCards(int *ptrCard) {
 	// pointers that store value of next two elements of array
 	int *y = ptrCard + 1;
 	int *z = ptrCard + 2;
+
+	if (*y == NULL || *z == NULL) { // if next element is null, shuffle array
+		int *shuffle = reShuffle();
+		if (*z == NULL) {
+			*z = shuffle;
+		}
+		else if (*y == NULL) {
+			*y = shuffle;
+			*z = shuffle + 1;
+		}
+	}
 
 	//int answer;
 	HUMSUM = *y + *z; // sum up the two element values
@@ -73,8 +132,12 @@ int passOutHumCards(int *ptrCard) {
 	printf(" --> Sum is %d\n", HUMSUM);
 
 	if (HUMSUM == 21) {
-		printf("BlackJack!");
-		//CheckAgainstComp
+		printf("BlackJack!\n");
+		printf("Computer cards are %d", pop());
+		printf(" and %d\n", pop());
+		printf(" --> Sum is %d\n", COMPSUM);
+
+		CompOperations(z);
 	}
 
 	else {
@@ -95,18 +158,26 @@ int passOutHumCards(int *ptrCard) {
 }
 
 // do mathematical operations to check sum of cards and see if they are within boundaries
-int HumanCardOperations(int *z, int sum) {
+void HumanCardOperations(int *zTwo, int sum) {
 
 	int answer;
 
 	if (sum > 21) {
-		printf("Bust!");
-		reShuffle(z); // reshuffle deck
-		//CheckAgainstComp
+		printf("Bust!\n\n");
+		printf("Computer cards are %d", pop());
+		printf(" and %d", pop());
+		printf(" --> Sum is %d\n", COMPSUM);
+		CompOperations(zTwo);
+	//	reShuffle(z); // reshuffle deck
+	//	CheckSums
 	}
 
 	else if (sum == 21) {
-		//CheckAgainstComp
+		printf("\nComputer cards are %d", pop());
+		printf(" and %d", pop());
+		printf(" --> Sum is %d\n", COMPSUM);
+		CompOperations(zTwo);
+		//CheckSums
 	}
 
 	else {
@@ -115,11 +186,15 @@ int HumanCardOperations(int *z, int sum) {
 
 		switch (answer) {
 		case 1:
-			humanHit(z);
+			humanHit(zTwo);
 			break;
 
 		case 0:
-			//CheckAgainstComp
+			printf("\nComputer cards are %d", pop());
+			printf(" and %d", pop());
+			printf(" --> Sum is %d\n", COMPSUM);
+			CompOperations(zTwo);
+//			CheckSums();
 			break;
 		}
 	}
@@ -127,39 +202,137 @@ int HumanCardOperations(int *z, int sum) {
 }
 
 // players hits and gets one card at a time
-int humanHit(int *z) {
+int humanHit(int *zThree) {
 
-	int *next = z + 1;
+	int *next = zThree + 1;
 
 	if (*next != NULL) {
 		HUMSUM += *next;
 	}
 
 	if (*next == NULL) { // if next element is null, shuffle array
-		reShuffle(z);
+		int *shuffle = reShuffle();
+		*next = shuffle;
 	}
 
-	int answer;
+	//int answer;
 
 	printf("New card is %d", *next);
 	printf(" --> Sum is %d\n", HUMSUM);
 
-	HumanCardOperations(next, HUMSUM); // check if new sum is within boundaries
+	HumanCardOperations(next, HUMSUM);
+}
 
-	//printf("Cards are now %d %d %d\n", *prev, *z, *next);
+void CompOperations(int *aPointer) {
 
-	//printf("Do you want to hit Yes = 1 or No = 0: ");
-	//scanf_s("%d", &answer);
+	int counter = 0;
+	counter += 1;
 
-	//switch (answer) {
-	//case 1:
-	//	humanHit(next, HUMSUM);
-	//	break;
+	if (COMPSUM == 21) {
+		if (counter == 1) { // fix counter
+			printf("BlackJack!\n");
+		}
+		CheckSums();
+		counter -= 1;
+		printf("-------------------------------------------------------------------\n");
+		int *compPlaysAgain = passOutCompCards(aPointer + 1);
+		int *humanPlaysAgain = passOutHumCards(compPlaysAgain);
+	}
 
-	//case 0:
-	//	break;
-	//}
+	else if (COMPSUM > 21) {
+		printf("Bust!\n");
+		CheckSums();
+		printf("-------------------------------------------------------------------\n");
+		int *compPlaysAgain = passOutCompCards(aPointer + 1);
+		int *humanPlaysAgain = passOutHumCards(compPlaysAgain);
+	}
 
+	else if (COMPSUM < 17) {
+		compHit(aPointer);
+	}
+
+	else if (COMPSUM >= 17 || COMPSUM < 21) {
+		CheckSums();
+		printf("-------------------------------------------------------------------\n");
+		int *compPlaysAgain = passOutCompCards(aPointer + 1);
+		int *humanPlaysAgain = passOutHumCards(compPlaysAgain);
+	}
+}
+
+//void CompOperations(int *z) {
+//
+//	printf("Computer cards are %d", pop());
+//	printf(" and %d\n", pop());
+//
+//}
+
+void compHit(int *hit) {
+
+	int *nextCard = hit + 1;
+
+	if (*nextCard == NULL) { // if next element is null, shuffle array
+		int *shuffle = reShuffle();
+		*nextCard = shuffle;
+	}
+
+	if (*nextCard != NULL) {
+		COMPSUM += *nextCard;
+	}
+
+	printf("New card is %d", *nextCard);
+	printf(" --> Sum is %d\n", COMPSUM);
+
+	CompOperations(nextCard); // check if new sum is within boundaries
+
+}
+
+void CheckSums() {
+
+	int cpSum = COMPSUM;
+	int huSum = HUMSUM;
+
+	if (cpSum == 21 & huSum == 21) {
+		printf("\nPush, no points ");
+		printf(" ---> Computer's Total = %d  Your Total = %d \n\n", COMPPOINT, HUMPOINT);
+
+	}
+
+	else if (cpSum == huSum) {
+		printf("\nPush, no points ");
+		printf(" ---> Computer's Total = %d  Your Total = %d \n\n", COMPPOINT, HUMPOINT);
+	}
+
+	else if (cpSum > 21) {
+		if (huSum <= 21) {
+			HUMPOINT += 1;
+			printf("\n+1 You ---> Computer's Total = %d Your Total = %d \n\n", COMPPOINT, HUMPOINT);
+		}
+
+		else {
+			printf("\nNo winners ");
+			printf(" ---> Computer's Total = %d  Your Total = %d \n\n", COMPPOINT, HUMPOINT);
+		}
+	}
+
+	else if (huSum > 21) {
+		if (cpSum <= 21) {
+			COMPPOINT += 1;
+			printf("\n+1 Computer ---> Computer's Total = %d  Your Total = %d \n\n", COMPPOINT, HUMPOINT);
+
+		}
+	}
+
+	else if (cpSum < huSum) {
+		printf("\nYou win!\n");
+		HUMPOINT += 1;
+		printf("+1 You ---> Computer's Total = %d  Your Total = %d \n\n", COMPPOINT, HUMPOINT);
+	}
+
+	else if (huSum < cpSum) {
+		printf("\nYou lose!\n");
+		COMPPOINT += 1;
+		printf("+1 Computer ---> Computer's Total = %d  Your Total = %d \n\n", COMPPOINT, HUMPOINT);
+	}
 }
 
 // A utility function to print an array
@@ -170,9 +343,8 @@ void printArray(int arr[], int n)
 	printf("\n");
 }
 
-int reShuffle(int *array_pnt) {
+int reShuffle() {
 
-	free(array_pnt);
 
 	int n = sizeArray(cardArray);
 	int firstHalfArray[sizeArray(cardArray) / 2];
@@ -218,16 +390,15 @@ int reShuffle(int *array_pnt) {
 
 int main() {
 
-	int *new_array = NULL;
+	s.top = -1;
 
-	int *pntArry = reShuffle(new_array);
+	int *pntArry = reShuffle();
 	int *compPlays = passOutCompCards(pntArry);
 	int *humanPlays = passOutHumCards(compPlays);
 
 	free(compPlays);
 	free(pntArry);
 	free(humanPlays);
-	free(new_array);
 
 	return 0;
 }

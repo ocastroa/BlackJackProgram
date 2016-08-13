@@ -110,6 +110,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BlackJackProgram.cpp" />
     <ClCompile Include="MainBlackJackClass.c" />
     <ClCompile Include="programProtoype.c" />
     <ClCompile Include="swapArray.c" />
