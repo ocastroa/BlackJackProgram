@@ -1,5 +1,5 @@
-//#include<stdio.h>
-//#include<stdlib.h>
+#include<stdio.h>
+#include<stdlib.h>
 //#include<time.h>
 //
 //#define Q (12)
@@ -55,4 +55,17 @@
 //	getchar();
 //
 //	return 0;
+//}
+
+
+//int main() {
+//	
+//	int *ptr;
+//	int count = 0;
+//	int sampleArray[6] = { 1,4,6,8,3,5 };
+//
+//	for (int i = 0; i < sizeof(sampleArray); i++) {
+//		printf("%d", sampleArray[i]);
+//
+//	}
 //}

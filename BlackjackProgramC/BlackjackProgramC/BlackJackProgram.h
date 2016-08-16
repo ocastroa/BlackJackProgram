@@ -5,6 +5,7 @@ extern int HUMSUM;
 extern int COMPSUM;
 extern int HUMPOINT;
 extern int COMPPOINT;
+extern int COUNTER;
 
 #define MAXSIZE 2
 
@@ -26,6 +27,8 @@ int humanHit(int *zThree);
 void CompOperations(int *aPointer);
 void compHit(int *hit);
 void CheckSums();
+
+int clubCard(int *cardNum);
 
 int reShuffle();
 

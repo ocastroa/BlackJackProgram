@@ -12,11 +12,13 @@ int HUMSUM = 0;
 int COMPSUM = 0;
 int HUMPOINT = 0;
 int COMPPOINT = 0;
+int COUNTER = 0; // keeps track of position in array. When counter reaches size of array, a new array will be made and counter will be 1
 
 int cardArray[] = { 3,K,Q,4,5,2,10,6,9,J,7,8,
 K,2,Q,3,J,8,10,5,9,6,4,7,
 6,9,7,3,8,4,Q,2,5,J,10,K,
 8,3,Q,5,J,4,6,7,K,10,9,2 };
+
 
 void push(int *pntA, int *pntB) {
 
@@ -81,15 +83,30 @@ int passOutCompCards(int *foo) {
 
 	int i = 0;
 	int *cardPtr = foo;
+	COUNTER += 1;
 
 	for (i = 0; i < 1; i++) {
-		if (*cardPtr == NULL) { // fix when pointer is done iterating through array
-			int *shuffle = reShuffle();
-			*cardPtr = shuffle;
+		if (COUNTER > sizeArray(cardArray)) {
+			//*foo = reShuffle();
+			cardPtr = reShuffle();
+			COUNTER = 1;
+			printf("Computer Cards are: \n");
+			clubCard(cardPtr);
+			//printf("Computer Cards are: %d", *cardPtr);
+			cardPtr++;
+			COUNTER += 1;
 		}
+		else {
+		//	printf("Computer Cards are: %d", *cardPtr);
+			printf("Computer Cards are: \n");
+			clubCard(cardPtr);
+			cardPtr++;
+			COUNTER += 1;
+		}
+	}
 
-		printf("Computer Cards are: %d", *cardPtr);
-		cardPtr++;
+	if (*cardPtr == 11 || *cardPtr == 12 || *cardPtr == 13) {
+		*cardPtr = 10;
 	}
 
 	int *add = cardPtr - 1;
@@ -97,7 +114,8 @@ int passOutCompCards(int *foo) {
 
 	push(cardPtr, add);
 
-	printf(" and ? \n");
+	printf("   and ? \n");
+//	printf("%d\n", COUNTER);
 	//printf(" --> Sum is %d\n", COMPSUM);
 
 	return (cardPtr); // return pointer to address of cardPtr
@@ -110,32 +128,41 @@ int passOutHumCards(int *ptrCard) {
 	int i = 0;
 	// pointers that store value of next two elements of array
 	int *y = ptrCard + 1;
+	COUNTER += 1;
 	int *z = ptrCard + 2;
+	COUNTER += 1;
 
-	if (*y == NULL || *z == NULL) { // if next element is null, shuffle array
-		int *shuffle = reShuffle();
-		if (*z == NULL) {
-			*z = shuffle;
-		}
-		else if (*y == NULL) {
-			*y = shuffle;
-			*z = shuffle + 1;
-		}
+	if (COUNTER > sizeArray(cardArray)) {
+		//*ptrCard = reShuffle();
+		y = reShuffle();
+		COUNTER = 1;
+		z = y + 1;
+		COUNTER += 1;
 	}
 
 	//int answer;
-	HUMSUM = *y + *z; // sum up the two element values
+//	HUMSUM = *y + *z; // sum up the two element values
 	//	int *humanPtr = ptrCard;
 
-	printf("Human Cards are: %d", *y);
-	printf(" and %d", *z);
-	printf(" --> Sum is %d\n", HUMSUM);
+	printf("Human Cards are: \n");
+	clubCard(y);
+//	printf("\t");
+	clubCard(z);
+
+	HUMSUM = *y + *z; // sum up the two element values
+
+	//printf(" and ", *z);
+	printf(" \n--> Sum is %d\n", HUMSUM);
+	//printf("%d\n", COUNTER);
 
 	if (HUMSUM == 21) {
 		printf("BlackJack!\n");
-		printf("Computer cards are %d", pop());
-		printf(" and %d\n", pop());
-		printf(" --> Sum is %d\n", COMPSUM);
+		printf("Computer cards are \n");
+		clubCardTwo(pop());
+		printf("   ");
+		clubCardTwo(pop());
+		//printf(" and %d\n", pop());
+		printf(" \n--> Sum is %d\n", COMPSUM);
 
 		CompOperations(z);
 	}
@@ -164,18 +191,24 @@ void HumanCardOperations(int *zTwo, int sum) {
 
 	if (sum > 21) {
 		printf("Bust!\n\n");
-		printf("Computer cards are %d", pop());
-		printf(" and %d", pop());
-		printf(" --> Sum is %d\n", COMPSUM);
+		printf("Computer cards are \n");
+		clubCardTwo(pop());
+		printf("   ");
+		clubCardTwo(pop());
+
+	//	printf(" and %d", pop());
+		printf(" \n--> Sum is %d\n", COMPSUM);
 		CompOperations(zTwo);
 	//	reShuffle(z); // reshuffle deck
 	//	CheckSums
 	}
 
 	else if (sum == 21) {
-		printf("\nComputer cards are %d", pop());
-		printf(" and %d", pop());
-		printf(" --> Sum is %d\n", COMPSUM);
+		printf("\nComputer cards are \n");
+		clubCardTwo(pop());
+		clubCardTwo(pop());
+	//	printf(" and %d", pop());
+		printf(" \n--> Sum is %d\n", COMPSUM);
 		CompOperations(zTwo);
 		//CheckSums
 	}
@@ -190,8 +223,11 @@ void HumanCardOperations(int *zTwo, int sum) {
 			break;
 
 		case 0:
-			printf("\nComputer cards are %d", pop());
-			printf(" and %d", pop());
+			printf("\nComputer cards are \n");
+			clubCardTwo(pop());
+			clubCardTwo(pop());
+			//printf("\nComputer cards are %d", pop());
+			//printf(" and %d", pop());
 			printf(" --> Sum is %d\n", COMPSUM);
 			CompOperations(zTwo);
 //			CheckSums();
@@ -205,35 +241,43 @@ void HumanCardOperations(int *zTwo, int sum) {
 int humanHit(int *zThree) {
 
 	int *next = zThree + 1;
+	COUNTER += 1;
 
-	if (*next != NULL) {
-		HUMSUM += *next;
+	if (COUNTER > sizeArray(cardArray)) {
+		next = reShuffle();
+		COUNTER = 1;
 	}
 
-	if (*next == NULL) { // if next element is null, shuffle array
-		int *shuffle = reShuffle();
-		*next = shuffle;
+	if (*next == 11 || *next == 12 || *next == 13) {
+		*next = 10;
+		HUMSUM += *next;
+	}
+	
+	else {
+		HUMSUM += *next;
 	}
 
 	//int answer;
 
-	printf("New card is %d", *next);
-	printf(" --> Sum is %d\n", HUMSUM);
+	printf("New card is: \n");
+	clubCard(next);
+	printf(" \n--> Sum is %d\n", HUMSUM);
+	printf("%d\n", COUNTER);
 
 	HumanCardOperations(next, HUMSUM);
 }
 
 void CompOperations(int *aPointer) {
 
-	int counter = 0;
-	counter += 1;
+//	int counter = 0;
+	//counter += 1;
 
 	if (COMPSUM == 21) {
-		if (counter == 1) { // fix counter
+		//if (counter == 1) { // fix counter
 			printf("BlackJack!\n");
-		}
+		//}
 		CheckSums();
-		counter -= 1;
+	//	counter -= 1;
 		printf("-------------------------------------------------------------------\n");
 		int *compPlaysAgain = passOutCompCards(aPointer + 1);
 		int *humanPlaysAgain = passOutHumCards(compPlaysAgain);
@@ -259,28 +303,30 @@ void CompOperations(int *aPointer) {
 	}
 }
 
-//void CompOperations(int *z) {
-//
-//	printf("Computer cards are %d", pop());
-//	printf(" and %d\n", pop());
-//
-//}
 
 void compHit(int *hit) {
 
 	int *nextCard = hit + 1;
+	COUNTER += 1;
 
-	if (*nextCard == NULL) { // if next element is null, shuffle array
-		int *shuffle = reShuffle();
-		*nextCard = shuffle;
+	if (COUNTER > sizeArray(cardArray)) {
+		nextCard = reShuffle();
+		COUNTER = 1;
 	}
 
-	if (*nextCard != NULL) {
+	if (*nextCard == 11 || *nextCard == 12 || *nextCard == 13) {
+		*nextCard = 10;
 		COMPSUM += *nextCard;
 	}
 
-	printf("New card is %d", *nextCard);
-	printf(" --> Sum is %d\n", COMPSUM);
+	else {
+		COMPSUM += *nextCard;
+	}
+
+	printf("New card is: \n");
+	clubCard(nextCard);
+	printf(" \n--> Sum is %d\n", COMPSUM);
+	printf("%d\n", COUNTER);
 
 	CompOperations(nextCard); // check if new sum is within boundaries
 
@@ -294,23 +340,26 @@ void CheckSums() {
 	if (cpSum == 21 & huSum == 21) {
 		printf("\nPush, no points ");
 		printf(" ---> Computer's Total = %d  Your Total = %d \n\n", COMPPOINT, HUMPOINT);
-
+		printf("%d\n", COUNTER);
 	}
 
 	else if (cpSum == huSum) {
 		printf("\nPush, no points ");
 		printf(" ---> Computer's Total = %d  Your Total = %d \n\n", COMPPOINT, HUMPOINT);
+		printf("%d\n", COUNTER);
 	}
 
 	else if (cpSum > 21) {
 		if (huSum <= 21) {
 			HUMPOINT += 1;
 			printf("\n+1 You ---> Computer's Total = %d Your Total = %d \n\n", COMPPOINT, HUMPOINT);
+			printf("%d\n", COUNTER);
 		}
 
 		else {
 			printf("\nNo winners ");
 			printf(" ---> Computer's Total = %d  Your Total = %d \n\n", COMPPOINT, HUMPOINT);
+			printf("%d\n", COUNTER);
 		}
 	}
 
@@ -318,7 +367,7 @@ void CheckSums() {
 		if (cpSum <= 21) {
 			COMPPOINT += 1;
 			printf("\n+1 Computer ---> Computer's Total = %d  Your Total = %d \n\n", COMPPOINT, HUMPOINT);
-
+			printf("%d\n", COUNTER);
 		}
 	}
 
@@ -326,20 +375,131 @@ void CheckSums() {
 		printf("\nYou win!\n");
 		HUMPOINT += 1;
 		printf("+1 You ---> Computer's Total = %d  Your Total = %d \n\n", COMPPOINT, HUMPOINT);
+		printf("%d\n", COUNTER);
 	}
 
 	else if (huSum < cpSum) {
 		printf("\nYou lose!\n");
 		COMPPOINT += 1;
 		printf("+1 Computer ---> Computer's Total = %d  Your Total = %d \n\n", COMPPOINT, HUMPOINT);
+		printf("%d\n", COUNTER);
 	}
+}
+
+int clubCard(int *cardNum) { // print out cards for pointers
+
+	if (*cardNum <= 10) {
+			//Heart Card
+			printf(" ----------\n");
+			printf("|          |\n");
+			printf("|    %02d    |\n", *cardNum);
+			printf("|          |\n");
+			printf(" -----------\n");
+			return cardNum;
+	}
+
+	if (*cardNum == 11) {
+			//Heart Card
+		    *cardNum = 10;
+
+			printf(" ----------\n");
+			printf("|          |\n");
+			printf("|     J    |\n");
+			printf("|          |\n");
+			printf(" ----------\n");
+		//	*cardNum = 10;
+			return cardNum;
+		}
+
+	if (*cardNum == 12) {
+		//Heart Card
+		*cardNum = 10;
+
+		printf(" ----------\n");
+		printf("|          |\n");
+		printf("|     Q    |\n");
+		printf("|          |\n");
+		printf(" ----------\n");
+	//	*cardNum = 10; //Set card value to 10
+		return cardNum;
+	}
+
+	if (*cardNum == 13) {
+		//Heart Card
+		*cardNum = 10;
+
+		printf(" ----------\n");
+		printf("|          |\n");
+		printf("|     K    |\n");
+		printf("|          |\n");
+		printf(" ----------\n");
+	//	*cardNum = 10; //Set card value to 10
+		return cardNum;
+	}
+
+	return;
+	}
+
+int clubCardTwo(int Nums) { // print out cards for stack
+
+	if (Nums <= 10) {
+		printf(" ----------\n");
+		printf("|          |\n");
+		printf("|    %02d    |\n", Nums);
+		printf("|          |\n");
+		printf(" -----------\n");
+		return Nums;
+	}
+
+	if (Nums == 11) {
+		//Heart Card
+		Nums = 10; //Set card value to 10
+
+		printf(" ----------\n");
+		printf("|          |\n");
+		printf("|     J    |\n");
+		printf("|          |\n");
+		printf(" ----------\n");
+	//	Nums = 10;
+		return Nums;
+	}
+
+	if (Nums == 12) {
+		//Heart Card
+		Nums = 10; //Set card value to 10
+
+		printf(" ----------\n");
+		printf("|          |\n");
+		printf("|     Q    |\n");
+		printf("|          |\n");
+		printf(" ----------\n");
+		//Nums = 10; //Set card value to 10
+		return Nums;
+	}
+
+	if (Nums == 13) {
+		//Heart Card
+		Nums = 10; //Set card value to 10
+
+		printf("----------\n");
+		printf("|         |\n");
+		printf("|    K    |\n");
+		printf("|         |\n");
+		printf("-----------\n");
+	//	Nums = 10; //Set card value to 10
+		return Nums;
+	}
+
+	return;
 }
 
 // A utility function to print an array
 void printArray(int arr[], int n)
 {
 	for (int i = 0; i < n; i++)
-		printf("%d ", arr[i]);
+		printf("%d(%d) ", arr[i], i+1);
+
+	printf("\n%d", sizeArray(cardArray));
 	printf("\n");
 }
 
