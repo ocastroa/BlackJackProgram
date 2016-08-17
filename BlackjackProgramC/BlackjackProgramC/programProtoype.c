@@ -1,6 +1,8 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include<time.h>
 #include "BlackJackProgram.h"
+//#include "dos.h"
 
 #define Q (12)
 #define K (13)
@@ -19,6 +21,10 @@ K,2,Q,3,J,8,10,5,9,6,4,7,
 6,9,7,3,8,4,Q,2,5,J,10,K,
 8,3,Q,5,J,4,6,7,K,10,9,2 };
 
+void delay(unsigned int msec) { // delays time so game appears slower to player
+	clock_t goal = msec + clock();
+	while (goal > clock());
+}
 
 void push(int *pntA, int *pntB) {
 
@@ -88,6 +94,8 @@ int passOutCompCards(int *foo) {
 	for (i = 0; i < 1; i++) {
 		if (COUNTER > sizeArray(cardArray)) {
 			//*foo = reShuffle();
+			printf("Shuffling Cards\n");
+			delay(1200);
 			cardPtr = reShuffle();
 			COUNTER = 1;
 			printf("Computer Cards are: \n");
@@ -114,7 +122,8 @@ int passOutCompCards(int *foo) {
 
 	push(cardPtr, add);
 
-	printf("   and ? \n");
+	printf("\n    and ? \n\n");
+	delay(1000);
 //	printf("%d\n", COUNTER);
 	//printf(" --> Sum is %d\n", COMPSUM);
 
@@ -134,6 +143,8 @@ int passOutHumCards(int *ptrCard) {
 
 	if (COUNTER > sizeArray(cardArray)) {
 		//*ptrCard = reShuffle();
+		printf("Shuffling Cards\n");
+		delay(1200);
 		y = reShuffle();
 		COUNTER = 1;
 		z = y + 1;
@@ -153,17 +164,18 @@ int passOutHumCards(int *ptrCard) {
 
 	//printf(" and ", *z);
 	printf(" \n--> Sum is %d\n", HUMSUM);
+	delay(1100);
 	//printf("%d\n", COUNTER);
 
 	if (HUMSUM == 21) {
 		printf("BlackJack!\n");
 		printf("Computer cards are \n");
 		clubCardTwo(pop());
-		printf("   ");
+	//	printf("   ");
 		clubCardTwo(pop());
 		//printf(" and %d\n", pop());
 		printf(" \n--> Sum is %d\n", COMPSUM);
-
+		delay(1100);
 		CompOperations(z);
 	}
 
@@ -193,11 +205,12 @@ void HumanCardOperations(int *zTwo, int sum) {
 		printf("Bust!\n\n");
 		printf("Computer cards are \n");
 		clubCardTwo(pop());
-		printf("   ");
+		//printf("   ");
 		clubCardTwo(pop());
 
 	//	printf(" and %d", pop());
 		printf(" \n--> Sum is %d\n", COMPSUM);
+		delay(1100);
 		CompOperations(zTwo);
 	//	reShuffle(z); // reshuffle deck
 	//	CheckSums
@@ -209,13 +222,15 @@ void HumanCardOperations(int *zTwo, int sum) {
 		clubCardTwo(pop());
 	//	printf(" and %d", pop());
 		printf(" \n--> Sum is %d\n", COMPSUM);
+		delay(1100);
 		CompOperations(zTwo);
 		//CheckSums
 	}
 
 	else {
-		printf("Do you want to hit Yes = 1 or No = 0: ");
+		printf("Do you want to hit Yes = 1 or No = 0: \n");
 		scanf_s("%d", &answer);
+		delay(1200);
 
 		switch (answer) {
 		case 1:
@@ -229,6 +244,7 @@ void HumanCardOperations(int *zTwo, int sum) {
 			//printf("\nComputer cards are %d", pop());
 			//printf(" and %d", pop());
 			printf(" --> Sum is %d\n", COMPSUM);
+			delay(1100);
 			CompOperations(zTwo);
 //			CheckSums();
 			break;
@@ -244,6 +260,8 @@ int humanHit(int *zThree) {
 	COUNTER += 1;
 
 	if (COUNTER > sizeArray(cardArray)) {
+		printf("Shuffling Cards\n");
+		delay(1200);
 		next = reShuffle();
 		COUNTER = 1;
 	}
@@ -262,7 +280,8 @@ int humanHit(int *zThree) {
 	printf("New card is: \n");
 	clubCard(next);
 	printf(" \n--> Sum is %d\n", HUMSUM);
-	printf("%d\n", COUNTER);
+	delay(1100);
+	//printf("%d\n", COUNTER);
 
 	HumanCardOperations(next, HUMSUM);
 }
@@ -279,6 +298,7 @@ void CompOperations(int *aPointer) {
 		CheckSums();
 	//	counter -= 1;
 		printf("-------------------------------------------------------------------\n");
+		delay(3000);
 		int *compPlaysAgain = passOutCompCards(aPointer + 1);
 		int *humanPlaysAgain = passOutHumCards(compPlaysAgain);
 	}
@@ -287,6 +307,7 @@ void CompOperations(int *aPointer) {
 		printf("Bust!\n");
 		CheckSums();
 		printf("-------------------------------------------------------------------\n");
+		delay(3000);
 		int *compPlaysAgain = passOutCompCards(aPointer + 1);
 		int *humanPlaysAgain = passOutHumCards(compPlaysAgain);
 	}
@@ -298,6 +319,7 @@ void CompOperations(int *aPointer) {
 	else if (COMPSUM >= 17 || COMPSUM < 21) {
 		CheckSums();
 		printf("-------------------------------------------------------------------\n");
+		delay(3000);
 		int *compPlaysAgain = passOutCompCards(aPointer + 1);
 		int *humanPlaysAgain = passOutHumCards(compPlaysAgain);
 	}
@@ -310,6 +332,8 @@ void compHit(int *hit) {
 	COUNTER += 1;
 
 	if (COUNTER > sizeArray(cardArray)) {
+		printf("Shuffling Cards\n");
+		delay(1200);
 		nextCard = reShuffle();
 		COUNTER = 1;
 	}
@@ -326,7 +350,8 @@ void compHit(int *hit) {
 	printf("New card is: \n");
 	clubCard(nextCard);
 	printf(" \n--> Sum is %d\n", COMPSUM);
-	printf("%d\n", COUNTER);
+	delay(1100);
+	//printf("%d\n", COUNTER);
 
 	CompOperations(nextCard); // check if new sum is within boundaries
 
@@ -340,26 +365,30 @@ void CheckSums() {
 	if (cpSum == 21 & huSum == 21) {
 		printf("\nPush, no points ");
 		printf(" ---> Computer's Total = %d  Your Total = %d \n\n", COMPPOINT, HUMPOINT);
-		printf("%d\n", COUNTER);
+		delay(3000);
+		//printf("%d\n", COUNTER);
 	}
 
 	else if (cpSum == huSum) {
 		printf("\nPush, no points ");
 		printf(" ---> Computer's Total = %d  Your Total = %d \n\n", COMPPOINT, HUMPOINT);
-		printf("%d\n", COUNTER);
+		delay(3000);
+		//printf("%d\n", COUNTER);
 	}
 
 	else if (cpSum > 21) {
 		if (huSum <= 21) {
 			HUMPOINT += 1;
 			printf("\n+1 You ---> Computer's Total = %d Your Total = %d \n\n", COMPPOINT, HUMPOINT);
-			printf("%d\n", COUNTER);
+			delay(3000);
+		//	printf("%d\n", COUNTER);
 		}
 
 		else {
 			printf("\nNo winners ");
 			printf(" ---> Computer's Total = %d  Your Total = %d \n\n", COMPPOINT, HUMPOINT);
-			printf("%d\n", COUNTER);
+			delay(3000);
+		//	printf("%d\n", COUNTER);
 		}
 	}
 
@@ -367,7 +396,8 @@ void CheckSums() {
 		if (cpSum <= 21) {
 			COMPPOINT += 1;
 			printf("\n+1 Computer ---> Computer's Total = %d  Your Total = %d \n\n", COMPPOINT, HUMPOINT);
-			printf("%d\n", COUNTER);
+			delay(3000);
+	//		printf("%d\n", COUNTER);
 		}
 	}
 
@@ -375,14 +405,16 @@ void CheckSums() {
 		printf("\nYou win!\n");
 		HUMPOINT += 1;
 		printf("+1 You ---> Computer's Total = %d  Your Total = %d \n\n", COMPPOINT, HUMPOINT);
-		printf("%d\n", COUNTER);
+		delay(3000);
+	//	printf("%d\n", COUNTER);
 	}
 
 	else if (huSum < cpSum) {
 		printf("\nYou lose!\n");
 		COMPPOINT += 1;
 		printf("+1 Computer ---> Computer's Total = %d  Your Total = %d \n\n", COMPPOINT, HUMPOINT);
-		printf("%d\n", COUNTER);
+		delay(3000);
+	//	printf("%d\n", COUNTER);
 	}
 }
 
@@ -395,6 +427,7 @@ int clubCard(int *cardNum) { // print out cards for pointers
 			printf("|    %02d    |\n", *cardNum);
 			printf("|          |\n");
 			printf(" -----------\n");
+			delay(1200);
 			return cardNum;
 	}
 
@@ -407,6 +440,7 @@ int clubCard(int *cardNum) { // print out cards for pointers
 			printf("|     J    |\n");
 			printf("|          |\n");
 			printf(" ----------\n");
+			delay(1200);
 		//	*cardNum = 10;
 			return cardNum;
 		}
@@ -420,6 +454,7 @@ int clubCard(int *cardNum) { // print out cards for pointers
 		printf("|     Q    |\n");
 		printf("|          |\n");
 		printf(" ----------\n");
+		delay(1200);
 	//	*cardNum = 10; //Set card value to 10
 		return cardNum;
 	}
@@ -433,6 +468,7 @@ int clubCard(int *cardNum) { // print out cards for pointers
 		printf("|     K    |\n");
 		printf("|          |\n");
 		printf(" ----------\n");
+		delay(1200);
 	//	*cardNum = 10; //Set card value to 10
 		return cardNum;
 	}
@@ -448,6 +484,7 @@ int clubCardTwo(int Nums) { // print out cards for stack
 		printf("|    %02d    |\n", Nums);
 		printf("|          |\n");
 		printf(" -----------\n");
+		delay(1200);
 		return Nums;
 	}
 
@@ -460,6 +497,7 @@ int clubCardTwo(int Nums) { // print out cards for stack
 		printf("|     J    |\n");
 		printf("|          |\n");
 		printf(" ----------\n");
+		delay(1200);
 	//	Nums = 10;
 		return Nums;
 	}
@@ -473,6 +511,7 @@ int clubCardTwo(int Nums) { // print out cards for stack
 		printf("|     Q    |\n");
 		printf("|          |\n");
 		printf(" ----------\n");
+		delay(1200);
 		//Nums = 10; //Set card value to 10
 		return Nums;
 	}
@@ -486,6 +525,7 @@ int clubCardTwo(int Nums) { // print out cards for stack
 		printf("|    K    |\n");
 		printf("|         |\n");
 		printf("-----------\n");
+		delay(1200);
 	//	Nums = 10; //Set card value to 10
 		return Nums;
 	}
@@ -542,7 +582,7 @@ int reShuffle() {
 	memcpy(a_array + sizeTwo, secHalfArray, sizeTwo * sizeof(int));
 
 	shuffle(a_array, n);  // deck will be split in half, shuffle, and be merged back to shuffle one last times
-	printArray(a_array, n);
+	//printArray(a_array, n);
 
 	return a_array;
 

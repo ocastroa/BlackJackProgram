@@ -18,6 +18,8 @@ struct stack
 typedef struct stack STACK;
 STACK s;
 
+void delay(unsigned int msec);
+
 void push(int *s, int *r);
 int  pop(void);
 
