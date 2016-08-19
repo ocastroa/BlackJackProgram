@@ -21,6 +21,9 @@
     <ClCompile Include="BlackJackProgram.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BlackJackProgramC.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BlackJackProgram.h">

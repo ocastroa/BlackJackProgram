@@ -111,6 +111,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BlackJackProgram.cpp" />
+    <ClCompile Include="BlackJackProgramC.c" />
     <ClCompile Include="programProtoype.c" />
   </ItemGroup>
   <ItemGroup>
