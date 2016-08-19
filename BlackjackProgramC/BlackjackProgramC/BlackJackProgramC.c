@@ -333,7 +333,6 @@ void HumanCardOperations(int *zTwo, int sum) {
 		case 9:
 			printf("\n Game Terminated");
 			delay(1300);
-			free(a_array);
 			exit(0);
 
 		case 1:
@@ -433,7 +432,6 @@ void hit(int *newCard, int cardNumOne, int cardNumTwo) { // this function is whe
 	case 9:
 		printf("\n Game Terminated");
 		delay(1300);
-		free(a_array);
 		exit(0);
 
 	case 1:
@@ -505,7 +503,6 @@ int humanHit(int *zThree) {
 		case 9:
 			printf("\n Game Terminated");
 			delay(1300);
-			free(a_array);
 			exit(0);
 
 		case 1:
@@ -551,7 +548,6 @@ void CompOperations(int *aPointer) { // do arithmetic operations on comp card va
 		CheckSums(); // compare card values with that of humans
 		printf("-------------------------------------------------------------------\n");
 		delay(3000);
-		free(a_array);
 		int *compPlaysAgain = passOutCompCards(aPointer + 1); // restart game; goes into this loop forever until player quits
 		int *humanPlaysAgain = passOutHumCards(compPlaysAgain);
 	}
@@ -561,7 +557,6 @@ void CompOperations(int *aPointer) { // do arithmetic operations on comp card va
 		CheckSums();
 		printf("-------------------------------------------------------------------\n");
 		delay(3000);
-		free(a_array);
 		int *compPlaysAgain = passOutCompCards(aPointer + 1);
 		int *humanPlaysAgain = passOutHumCards(compPlaysAgain);
 	}
@@ -574,7 +569,6 @@ void CompOperations(int *aPointer) { // do arithmetic operations on comp card va
 		CheckSums();
 		printf("-------------------------------------------------------------------\n");
 		delay(3000);
-		free(a_array);
 		int *compPlaysAgain = passOutCompCards(aPointer + 1);
 		int *humanPlaysAgain = passOutHumCards(compPlaysAgain);
 	}
