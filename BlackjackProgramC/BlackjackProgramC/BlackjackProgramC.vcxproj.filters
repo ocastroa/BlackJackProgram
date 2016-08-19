@@ -15,12 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="MainBlackJackClass.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="swapArray.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="programProtoype.c">
       <Filter>Source Files</Filter>
     </ClCompile>

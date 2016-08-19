@@ -2,7 +2,6 @@
 #include<stdlib.h>
 #include<time.h>
 #include "BlackJackProgram.h"
-//#include "dos.h"
 
 #define Q (12)
 #define K (13)
@@ -10,7 +9,7 @@
 #define A (1)
 #define sizeArray(x) (sizeof(x)/ sizeof((x)[0]))
 
-// global varsch
+// global vars
 int HUMSUM = 0;
 int COMPSUM = 0;
 int HUMPOINT = 0;
@@ -21,14 +20,57 @@ int COUNTER = 0; // keeps track of position in array. When counter reaches size 
 int cardArray[] = { A,3,K,Q,4,5,2,10,6,9,J,7,8,
 K,2,Q,3,J,8,10,5,A,9,6,4,7,
 6,9,A,7,3,8,4,Q,2,5,J,10,K,
-8,3,Q,5,J,4,A,6,7,K,10,9,2 };
+8,3,Q,5,J,4,A,6,7,K,10,9,2,
+A,3,K,Q,4,5,2,10,6,9,J,7,8,
+K,2,Q,3,J,8,10,5,A,9,6,4,7,
+6,9,A,7,3,8,4,Q,2,5,J,10,K,
+8,3,Q,5,J,4,A,6,7,K,10,9,2,
+A,3,K,Q,4,5,2,10,6,9,J,7,8,
+K,2,Q,3,J,8,10,5,A,9,6,4,7,
+6,9,A,7,3,8,4,Q,2,5,J,10,K,
+8,3,Q,5,J,4,A,6,7,K,10,9,2 }; // 3 decks
+
+
+void free(int *varToBeFree) {
+	free(varToBeFree);
+}
 
 void delay(unsigned int msec) { // delays time so game appears slower to player
 	clock_t goal = msec + clock();
 	while (goal > clock());
 }
 
-void push(int *pntA, int *pntB) {
+void checkValue(int *number) { // check value that user inputs and take appropriate action
+	int answer;
+
+	printf("Do you want to hit Yes = 1 or No = 0: \n");
+	scanf_s("%d", &answer);
+	getchar();
+	delay(1200);
+
+	switch (answer) {
+
+	case 9:
+		printf("\n Game Terminated");
+		delay(1300);
+		exit(0);
+
+	case 1:
+		humanHit(number);
+		break;
+
+	case 0:
+		popComputerCards(number);
+		break;
+
+	default:
+		printf("Enter valid number\n");
+		delay(1200);
+		checkValue(number);
+	}
+}
+
+void push(int *pntA, int *pntB) { // push comps cards into stack so later pushed cards can be printeds
 
 	if (s.top == (MAXSIZE - 1)) {
 		printf("Stack is full!\n");
@@ -84,17 +126,61 @@ void shuffle(int arr[], int n) {
 
 		swap(&arr[i], &arr[foo]);
 	}
+
+}
+
+int reShuffle() {
+
+	int n = sizeArray(cardArray);
+	int firstHalfArray[sizeArray(cardArray) / 2];
+	int secHalfArray[sizeArray(cardArray) / 2];
+	int j = 24;
+
+	// get first half of cardArray
+	for (int i = 0; i < sizeArray(cardArray) / 2; i++) {
+		int foo;
+		foo = cardArray[i];
+		firstHalfArray[i] = foo;
+	}
+
+	int size = sizeArray(firstHalfArray);
+	shuffle(firstHalfArray, size);
+	//printArray(firstHalfArray, size);
+
+	// get second half of cardArray
+	for (int i = 0; i < sizeArray(cardArray) / 2; i++) {
+		int foo;
+		foo = cardArray[j];
+		secHalfArray[i] = foo;
+		j++;
+	}
+
+	int sizeTwo = sizeArray(secHalfArray);
+	shuffle(secHalfArray, sizeTwo);
+	//printArray(secHalfArray, sizeTwo);
+
+	int *a_array;
+	a_array = (int*)malloc(sizeof(int) * sizeof(cardArray));
+
+	// merge above two arrays into  one
+	memcpy(a_array, firstHalfArray, size * sizeof(int));
+	memcpy(a_array + sizeTwo, secHalfArray, sizeTwo * sizeof(int));
+
+	shuffle(a_array, n);  // deck will be split in half, shuffle, and be merged back to shuffle one last times
+						  //printArray(a_array, n);
+
+	return a_array;
+
 }
 
 // display first out of two cards from comps hand
 int passOutCompCards(int *foo) {
-
 	int i = 0;
 	int *cardPtr = foo;
 	COUNTER += 1;
 
 	for (i = 0; i < 1; i++) {
-		if (COUNTER > sizeArray(cardArray)) {
+		if (COUNTER > sizeArray(cardArray)) { // if COUNTER is greater then size of array, reshuffle
 			printf("Shuffling Cards\n");
 			delay(1200);
 			cardPtr = reShuffle();
@@ -114,15 +200,15 @@ int passOutCompCards(int *foo) {
 		}
 	}
 
-	if (*cardPtr == 11 || *cardPtr == 12 || *cardPtr == 13) {
+	if (*cardPtr == 11 || *cardPtr == 12 || *cardPtr == 13) { // change value to 10 for face cards
 		*cardPtr = 10;
 	}
 
 	int *add = cardPtr - 1;
 
-	if (*add == 1 || *cardPtr == 1) {
+	if (*add == 1 || *cardPtr == 1) { // check if cards are Aces
 		int checkValue = blackJack(add, cardPtr, COMPSUM);
-		if (checkValue == 21) {
+		if (checkValue == 21) { // check if sum is 21
 			COMPSUM = 21;
 		}
 		else {
@@ -136,7 +222,7 @@ int passOutCompCards(int *foo) {
 
 	push(cardPtr, add);
 
-	printf("\n    and ? \n\n");
+	printf("\n    and ? \n\n"); 
 	delay(1000);
 //	printf("%d\n", COUNTER);
 	//printf(" --> Sum is %d\n", COMPSUM);
@@ -144,7 +230,7 @@ int passOutCompCards(int *foo) {
 	return (cardPtr); // return pointer to address of cardPtr
 }
 
-void popComputerCards(int *value) {
+void popComputerCards(int *value) { // pop comp cards and print them to screen
 	printf("Computer cards are \n");
 	clubCardTwo(pop());
 	clubCardTwo(pop());
@@ -179,7 +265,7 @@ int passOutHumCards(int *ptrCard) {
 	clubCard(y);
 	clubCard(z);
 
-	if (*y == 1 || *z == 1) {
+	if (*y == 1 || *z == 1) { // check if any of both cards are Aces
 		int checkValue = blackJack(y, z, HUMSUM);
 		int sum = 0;
 
@@ -188,13 +274,13 @@ int passOutHumCards(int *ptrCard) {
 		}
 
 		else {
-			if (*y == 1) {
+			if (*y == 1) { // if first card is an Ace, make that value 11 and add it to second card value
 				int otherSum = 11;
 				sum = checkValue;
 				HUMSUM = otherSum + *z;
 			}
 			else {
-				int otherSum = 11;
+				int otherSum = 11; // add first card value to second Ace card with value 11, max can be at most 21
 				sum = checkValue;
 				HUMSUM = otherSum + *y;
 			}
@@ -223,36 +309,6 @@ int passOutHumCards(int *ptrCard) {
 	}
 }
 
-void checkValue(int *number) {
-	int answer;
-
-	printf("Do you want to hit Yes = 1 or No = 0: \n");
-	scanf_s("%d", &answer);
-	getchar();
-	delay(1200);
-
-	switch (answer) {
-
-	case 9:
-		printf("\n Game Terminated");
-		delay(1300);
-		exit(0);
-
-	case 1:
-		humanHit(number);
-		break;
-
-	case 0:
-		popComputerCards(number);
-		break;
-
-	default:
-		printf("Enter valid number\n");
-		delay(1200);
-		checkValue(number);
-	}
-}
-
 // do mathematical operations to check sum of cards and see if they are within boundaries
 void HumanCardOperations(int *zTwo, int sum) {
 
@@ -277,6 +333,7 @@ void HumanCardOperations(int *zTwo, int sum) {
 		case 9:
 			printf("\n Game Terminated");
 			delay(1300);
+			free(a_array);
 			exit(0);
 
 		case 1:
@@ -294,7 +351,7 @@ void HumanCardOperations(int *zTwo, int sum) {
 
 }
 
-void hit(int *newCard, int cardNumOne, int cardNumTwo) {
+void hit(int *newCard, int cardNumOne, int cardNumTwo) { // this function is when an Ace was first hit and player wants to hit again; takes account of possible double values
 
 	int *nextCard = newCard + 1;
 	COUNTER += 1;
@@ -315,31 +372,32 @@ void hit(int *newCard, int cardNumOne, int cardNumTwo) {
 		printf("\nNew card is: \n");
 		clubCard(nextCard);
 
-		if (cardNumTwo >= 21 & cardNumOne >= 21) {
+		if (cardNumTwo >= 21 & cardNumOne >= 21) { // if both possible values of cards is greater then 21
 			printf("Bust!");
 			popComputerCards(nextCard);
 		}
 
-		if (cardNumTwo >= 21) {
+		if (cardNumTwo >= 21) { // if second possible value is greater then 21, only print out the first possible value
 			printf(" \n--> Sum is %d\n", cardNumOne);
 			delay(1100);
 		}
 		else {
-			printf(" \n--> Sum is %d / %d \n", cardNumOne, cardNumTwo);
+			printf(" \n--> Sum is %d / %d \n", cardNumOne, cardNumTwo); // else print out both possible values
 			delay(1100);
 		}
 	}
 
-	if (*nextCard == A) {
+	if (*nextCard == A) { // if the other card hit is an Ace
 		int aceEleven = 11;
 		int answer;
 
+		// check both possible cases when Ace is 1 and 11
 		cardNumOne += *nextCard;
 		cardNumTwo += aceEleven;
 		printf("New card is: \n");
 		clubCard(nextCard);
 
-		if (cardNumTwo >= 21) {
+		if (cardNumTwo >= 21) { // if second sum is greter then 21, make Ace value 1
 			printf(" \n--> Sum is %d\n", cardNumOne);
 			delay(1100);
 		}
@@ -350,6 +408,7 @@ void hit(int *newCard, int cardNumOne, int cardNumTwo) {
 	}
 
 	else {
+		// add new card value to both values and see which one is greater
 		cardNumOne += *nextCard;
 		cardNumTwo += *nextCard;
 
@@ -374,6 +433,7 @@ void hit(int *newCard, int cardNumOne, int cardNumTwo) {
 	case 9:
 		printf("\n Game Terminated");
 		delay(1300);
+		free(a_array);
 		exit(0);
 
 	case 1:
@@ -445,6 +505,7 @@ int humanHit(int *zThree) {
 		case 9:
 			printf("\n Game Terminated");
 			delay(1300);
+			free(a_array);
 			exit(0);
 
 		case 1:
@@ -484,13 +545,14 @@ int humanHit(int *zThree) {
 	}
 }
 
-void CompOperations(int *aPointer) {
+void CompOperations(int *aPointer) { // do arithmetic operations on comp card values
 
 	if (COMPSUM == 21) {
-		CheckSums();
+		CheckSums(); // compare card values with that of humans
 		printf("-------------------------------------------------------------------\n");
 		delay(3000);
-		int *compPlaysAgain = passOutCompCards(aPointer + 1);
+		free(a_array);
+		int *compPlaysAgain = passOutCompCards(aPointer + 1); // restart game; goes into this loop forever until player quits
 		int *humanPlaysAgain = passOutHumCards(compPlaysAgain);
 	}
 
@@ -499,6 +561,7 @@ void CompOperations(int *aPointer) {
 		CheckSums();
 		printf("-------------------------------------------------------------------\n");
 		delay(3000);
+		free(a_array);
 		int *compPlaysAgain = passOutCompCards(aPointer + 1);
 		int *humanPlaysAgain = passOutHumCards(compPlaysAgain);
 	}
@@ -511,13 +574,14 @@ void CompOperations(int *aPointer) {
 		CheckSums();
 		printf("-------------------------------------------------------------------\n");
 		delay(3000);
+		free(a_array);
 		int *compPlaysAgain = passOutCompCards(aPointer + 1);
 		int *humanPlaysAgain = passOutHumCards(compPlaysAgain);
 	}
 }
 
 
-void compHit(int *hit) {
+void compHit(int *hit) { // computers hits 
 
 	int *nextCard = hit + 1;
 	COUNTER += 1;
@@ -534,7 +598,7 @@ void compHit(int *hit) {
 	}
 	
 	if (*nextCard == 1) {
-		int cardResult = checkAce(nextCard, COMPSUM);
+		int cardResult = checkAce(nextCard, COMPSUM); // check possible scenarios for when card is Ace
 		COMPSUM = cardResult;
 	}
 
@@ -552,7 +616,7 @@ void compHit(int *hit) {
 
 }
 
-int blackJack(int *firstCard, int *secondCard, int sum) {
+int blackJack(int *firstCard, int *secondCard, int sum) { // check the sums of first two cards, if sum is 21 then blackjack, else continue
 
 	int blackjack = 21;
 
@@ -567,7 +631,7 @@ int blackJack(int *firstCard, int *secondCard, int sum) {
 	return;
 }
 
-int checkAce(int *checkCard, int sumCard) {
+int checkAce(int *checkCard, int sumCard) { // checks scenarios for when computer hits Ace
 
 	int addCards = 0;
 	int changeValue = 1;
@@ -587,26 +651,26 @@ int checkAce(int *checkCard, int sumCard) {
 }
 
 
-void CheckSums() {
+void CheckSums() { // compare human sums and computer sums
 
 	int cpSum = COMPSUM;
 	int huSum = HUMSUM;
 
-	if (cpSum == 21 & huSum == 21) {
+	if (cpSum == 21 & huSum == 21) {// if both cards are 21 then its a push
 		printf("\nPush, no points ");
 		printf(" ---> Computer's Total = %d  Your Total = %d \n\n", COMPPOINT, HUMPOINT);
 		delay(3000);
 		//printf("%d\n", COUNTER);
 	}
 
-	else if (cpSum == huSum) {
+	else if (cpSum == huSum) { // if value of both cards are the same then its a push
 		printf("\nPush, no points ");
 		printf(" ---> Computer's Total = %d  Your Total = %d \n\n", COMPPOINT, HUMPOINT);
 		delay(3000);
 		//printf("%d\n", COUNTER);
 	}
 
-	else if (cpSum > 21) {
+	else if (cpSum > 21) { // if compsum is greater then 21 but human sum is less then 21, then human wins
 		if (huSum <= 21) {
 			HUMPOINT += 1;
 			printf("\n+1 You ---> Computer's Total = %d Your Total = %d \n\n", COMPPOINT, HUMPOINT);
@@ -622,7 +686,7 @@ void CheckSums() {
 		}
 	}
 
-	else if (huSum > 21) {
+	else if (huSum > 21) { // if humans sum is greater then 21 and comp sum is less then 21, comp wins
 		if (cpSum <= 21) {
 			COMPPOINT += 1;
 			printf("\n+1 Computer ---> Computer's Total = %d  Your Total = %d \n\n", COMPPOINT, HUMPOINT);
@@ -631,7 +695,7 @@ void CheckSums() {
 		}
 	}
 
-	else if (cpSum < huSum) {
+	else if (cpSum < huSum) { // if comp sum is less then human sum, human wins
 		printf("\nYou win!\n");
 		HUMPOINT += 1;
 		printf("+1 You ---> Computer's Total = %d  Your Total = %d \n\n", COMPPOINT, HUMPOINT);
@@ -639,7 +703,7 @@ void CheckSums() {
 	//	printf("%d\n", COUNTER);
 	}
 
-	else if (huSum < cpSum) {
+	else if (huSum < cpSum) { // if human sum is less then comp sum comp wins
 		printf("\nYou lose!\n");
 		COMPPOINT += 1;
 		printf("+1 Computer ---> Computer's Total = %d  Your Total = %d \n\n", COMPPOINT, HUMPOINT);
@@ -773,50 +837,6 @@ void printArray(int arr[], int n)
 	printf("\n");
 }
 
-int reShuffle() {
-
-	int n = sizeArray(cardArray);
-	int firstHalfArray[sizeArray(cardArray) / 2];
-	int secHalfArray[sizeArray(cardArray) / 2];
-	int j = 24;
-
-	// get first half of cardArray
-	for (int i = 0; i < sizeArray(cardArray) / 2; i++) {
-		int foo;
-		foo = cardArray[i];
-		firstHalfArray[i] = foo;
-	}
-
-	int size = sizeArray(firstHalfArray);
-	shuffle(firstHalfArray, size);
-	//printArray(firstHalfArray, size);
-
-	// get second half of cardArray
-	for (int i = 0; i < sizeArray(cardArray) / 2; i++) {
-		int foo;
-		foo = cardArray[j];
-		secHalfArray[i] = foo;
-		j++;
-	}
-
-	int sizeTwo = sizeArray(secHalfArray);
-	shuffle(secHalfArray, sizeTwo);
-	//printArray(secHalfArray, sizeTwo);
-
-	int *a_array;
-	a_array = (int*)malloc(sizeof(int) * sizeof(cardArray));
-
-	// merge above two arrays into  one
-	memcpy(a_array, firstHalfArray, size * sizeof(int));
-	memcpy(a_array + sizeTwo, secHalfArray, sizeTwo * sizeof(int));
-
-	shuffle(a_array, n);  // deck will be split in half, shuffle, and be merged back to shuffle one last times
-	//printArray(a_array, n);
-
-	return a_array;
-
-}
-
 int main() {
 
 	s.top = -1;
@@ -825,16 +845,14 @@ int main() {
 	printf("                    Welcome to the game of Blackjack                      \n");
 	printf("                         Created by Oscar Castro                        \n\n");
 	printf("            To hit press 1, to stay press 0, to quit game press 9          ");
-	printf("\n\n                             Enjoy!!!                                    \n");
+	printf("\n\n                                    Enjoy!!!                           \n");
 	printf("---------------------------------------------------------------------------\n\n");
 
 	int *pntArry = reShuffle();
 	int *compPlays = passOutCompCards(pntArry);
 	int *humanPlays = passOutHumCards(compPlays);
 
-	free(compPlays);
 	free(pntArry);
-	free(humanPlays);
 
 	return 0;
 }
