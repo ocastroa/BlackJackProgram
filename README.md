@@ -1,2 +1,2 @@
 # BlackJackProgram
-Quick game of blackjack in different programming languages
+Quick game of blackjack in C
