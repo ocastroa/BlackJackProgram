@@ -22,20 +22,25 @@ git clone https://github.com/ocastroa/GuessWordPubNub.git
 ## How to Play
 
 1) First player in the lobby is the host. Second player that joins that same lobby is the guest.
+
 2) Game starts when there are two player's in a lobby.
+
 3) The host is given a word and needs to draw it on the canvas.
+
 4) The guest has to guess the drawing in 3 tries and enter their guess in the guess chat box. 
-- If guest guesses the correct word, they are awarded a point.
-- Note: The guest can see the drawing on their canvas, but cannot draw on the canvas as it is not their turn to draw. 
-4) Once a word is guessed or tries equals to 0, roles are switched and the guest has to draw a new word while the host has to guess the drawing.
-5) Roles keep switching until a player reaches a score of 3. That player is announced the winner and game ends
-- If player leaves before the game ends, the other player is announced the winner
+    - If guest guesses the correct word, they are awarded a point.
+    - Note: The guest can see the drawing on their canvas, but cannot draw on the canvas as it is not their turn to draw. 
+
+5) Once a word is guessed or tries equals to 0, roles are switched and the guest has to draw a new word while the host has to guess the drawing.
+
+6) Roles keep switching until a player reaches a score of 3. That player is announced the winner and game ends
+    - If player leaves before the game ends, the other player is announced the winner
 
 ### Notes
 
 - Game is kept simple, as the purpose of this game is to demonstrate how PubNub's API is implemented in a multiplayer game. The possibilities for this game are endless. You can allow for more player's in a lobby, let player's choose a category to draw (like animals), increase the winning score from 3, add more colors to choose from, add a time limit for drawing the word, etc.
 
 ### Acknowledgements
-- Inspiration for the game, and some pieces of code, was taken from PubNubs opensource project: [codoodler] (https://github.com/pubnub/codoodler)- a multi-user doodling web app. 
-- Other sources used: [PubNub JavaScript V4 SDK ] (https://www.pubnub.com/docs/web-javascript/pubnub-javascript-sdk), [Building Your First Multiplayer Game] (https://www.pubnub.com/tutorials/javascript/multiplayer-game/), [Adding In-game Chat to a Multiplayer Game with ChatEngine] (https://www.pubnub.com/blog/in-game-multiplayer-chat-with-chatengine/)
+- Inspiration for the game, and some pieces of code, was taken from PubNubs opensource project: [codoodler](https://github.com/pubnub/codoodler)- a multi-user doodling web app. 
+- Other sources used: [PubNub JavaScript V4 SDK ](https://www.pubnub.com/docs/web-javascript/pubnub-javascript-sdk), [Building Your First Multiplayer Game](https://www.pubnub.com/tutorials/javascript/multiplayer-game/), [Adding In-game Chat to a Multiplayer Game with ChatEngine](https://www.pubnub.com/blog/in-game-multiplayer-chat-with-chatengine/)
  
